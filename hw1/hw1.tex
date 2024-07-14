@@ -1,0 +1,159 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\lstset{language=C++,
+                basicstyle=\ttfamily,
+                keywordstyle=\color{blue}\ttfamily,
+                stringstyle=\color{red}\ttfamily,
+                commentstyle=\color{green}\ttfamily,
+                morecomment=[l][\color{magenta}]{\#}
+}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage[left=3cm, right=3cm, top=4cm, bottom=4cm]{geometry}
+\title{ML\_HW1}
+\author{B10902027 Je-Wei, Tsao}
+\begin{document}
+\maketitle
+\begin{enumerate}
+    \item \text{[a]}\\%p1
+    \\ML is suited for pattern recognition and prediction tasks from large amounts of data. Voice assistants can be trained on large datasets of spoken words to improve their natural language processing accuracy and comprehension capabilities.\\
+    \item \text{[d]}\\%p2
+    \\Let $L$ be the learning rate, then $\textbf{w}_{t+1} = \textbf{w}_t + y_{n(t)}\textbf{x}_{n(t)}\cdot L$. We want to ensure that $\textbf{w}^T_{t+1}$ is correct on $(\textbf{x}_{n(t)}, y_{n_(t)})$, which means 
+    \[\textbf{w}_{t+1}\cdot \textbf{x}_{n(t)} = \textbf{w}_t\cdot \textbf{x}_{n(t)} + y_{n(t)}||\textbf{x}_{n(t)}||^2\cdot L > 0\]
+    \[L < -\frac{\textbf{w}_t^T \textbf{x}_{n(t)}}{y_{n(t)}||\textbf{x}_{n(t)}||^2} = -\frac{y_{n(t)}\cdot \textbf{w}_t^T \textbf{x}_{n(t)}}{||\textbf{x}_{n(t)}||^2}\]
+    \[L = \lfloor -\frac{y_{n(t)}\cdot \textbf{w}_t^T \textbf{x}_{n(t)}}{||\textbf{x}_{n(t)}||^2} \rfloor + 1\]
+    \item \text{[c]}\\%p3
+    \\We know
+    \begin{align*}
+        \frac{\textbf{w}^T_f\textbf{w}_{t+1}}{|\textbf{w}_f|} & = \frac{\textbf{w}^T_f}{|\textbf{w}_f|}(\textbf{w}_t + y_{n(t)}\textbf{x}_{n(t)})\\
+        & \geq \frac{\textbf{w}^T_f\textbf{w}_f}{|\textbf{w}_f|} + \mathop{\boldsymbol{min}}_n\frac{y_{n(t)}\textbf{w}^T_f\textbf{x}_{n(t)}}{|\textbf{w}_f|}\\
+        & = \frac{\textbf{w}^T_f\textbf{w}_f}{|\textbf{w}_f|} + \rho_z\\
+    \end{align*}
+    Hence, we can get $\frac{\textbf{w}^T_f\textbf{w}_T}{|\textbf{w}_f|} \geq T\cdot\rho_z$ by magic chain. Similarly, we can find that
+    \begin{align*}
+        ||\textbf{w}||^2 & \leq ||\textbf{w}_t||^2 + \mathop{\boldsymbol{max}}_n||\textbf{x}_n||^2\\
+        & = ||\textbf{w}_t||^2 + R^2\\
+    \end{align*}
+    and get $|\textbf{w}_T| = \frac{\sqrt{T}}{R}$. Since we have normalized the input, $R = |z| = 1$
+    \[\frac{\textbf{w}^T_f\textbf{w}_T}{|\textbf{w}_f||\textbf{w}_t|}\geq \frac{T\rho_z}{\sqrt{z}R}\]
+    \[T\leq \frac{R^2}{\rho_z^2} = \frac{1}{\rho_z^2}\]
+    the answer is [c].\\
+    \item \text{[b]}%p4
+    \begin{align*}
+        U_{orig} = \left(\frac{R}{\rho}\right)^2
+        & = \frac{\mathop{\boldsymbol{max}}\limits_n||\textbf{x}_n||^2}{\mathop{\boldsymbol{min}}\limits_n y_n^2||\textbf{w}_f^T||^2 ||x_n||^2 cos^2\theta}\\
+        U = \left(\frac{R}{\rho}\right)^2 
+        & = \frac{\mathop{\boldsymbol{max}}\limits_n||\textbf{z}_n||^2}{\mathop{\boldsymbol{min}}\limits_n y_n^2||\textbf{w}_f^T||^2 ||z_n||^2 cos^2\theta}\\
+        & = \frac{1}{\mathop{\boldsymbol{min}}\limits_n y_n^2||\textbf{w}_f^T||^2 cos^2\theta}
+    \end{align*}
+    Hence,\[\frac{U_{orig}}{U} = \frac{\mathop{\boldsymbol{max}}\limits_n||\textbf{x}_n||^2}{\mathop{\boldsymbol{min}}\limits_n||\textbf{x}_n||^2}\geq 1 \Rightarrow U_{orig}\geq U\]
+    \item \text{[c]}\\%p5
+    \\Using PAM\\
+    \begin{tabular}{|c c c c c|} 
+        \hline
+        t & $\textbf{w}_t$ & $y_n\textbf{w}_t^T\textbf{x}_n$ & update & $\textbf{w}_{t+1}$ \\ [0.5ex] 
+        \hline
+        0 & (0,0,0) & 0 & yes & (-1,2,-2) \\ 
+        \hline
+        1 & (-1,2,-2) & 7 & no & (-1,2,-2) \\
+        \hline
+        2 & (-1.2.-2) & 3 & yes & (0,4,-2) \\
+        \hline
+        3 & (0,4,-2) & 4 & yes & (-1,5,-2) \\
+        \hline
+        4 & (-1,5,-2) & 2 & yes & (0,6,-1) \\
+        \hline
+    \end{tabular}\\
+    Using $\textbf{w}_f = (0,6,-1)$ to test examples, we can find that all of them are correct.\\\\
+    Using PLA\\
+    \begin{tabular}{|c c c c c|} 
+        \hline
+        t & $\textbf{w}_t$ & $y_n\textbf{w}_t^T\textbf{x}_n$ & update & $\textbf{w}_{t+1}$ \\ [0.5ex] 
+        \hline
+        0 & (0,0,0) & 0 & yes & (-1,2,-2) \\ 
+        \hline
+        1 & (-1,2,-2) & 7 & no & (-1,2,-2) \\
+        \hline
+        2 & (-1.2.-2) & 3 & no & (-1,2,-2) \\
+        \hline
+        3 & (-1.2.-2) & 3 & no & (-1,2,-2) \\
+        \hline
+        4 & (-1.2.-2) & -1 & yes & (0,3,-1) \\
+        \hline
+            \end{tabular}\\
+    Using $\textbf{w}_f = (0,3,-1)$ to test examples, we can find that first two of them are incorrect.
+    Hence, the answer is 2.\\
+    \item \text{[a]}\\%p6
+    \\The problem is a supervised regression problem because:
+    \begin{enumerate}
+        \item[(1)] The goal is to predict the rating for a movie that has not been rated based on the ratings given by other users who have rated similar movies.
+        \item[(2)] The output variable (movie ratings) is a real continuous variable that can take any value within the range [1,5]. 
+    \end{enumerate}
+    \item \text{[b]}\\%p7
+    \\In binary classification, the goal is to classify data into one of two possible classes based on some input features. In this case, the two possible outputs from the model are the two classes, and the labeler is asked to choose which one is better, assigning a binary label to each output.\\
+    \item \text{[e]}\\%p8
+    \\Choose first three examples (1,0), (3,2), (0,2) as $D$
+    \begin{enumerate}
+        \item[(1)] PLA: We can find that $E_{in} = 0$ when \textbf{w} = (1,2). Then, do PLA to other three examples and we find that all of them are incorrect. $\Rightarrow E_{ots} = 1$
+        \item[(2)] human algorithm:
+        $g(x_1,x_2) = \left\{
+            \begin{array}{lr}
+                1,&x_1 + 2x_2 \leq 7\\
+                -1,&x_1 + 2x_2 > 7
+            \end{array}
+        \right.$
+        , $D$ and other three examples are all correct. $\Rightarrow E_{ots} = 0$
+    \end{enumerate}
+    Hence, the answer is (0,1).\\
+    \item \text{[d]}\\%p9
+    \\\begin{align*}
+        E_{out}(h1) &= P(x_1^2 + x_2^2 < 1) - P(x_1^2 + x_2^2 < 0.25) = \dfrac{1}{4}\cdot1\cdot1\cdot\pi - \dfrac{1}{4}\cdot0.5\cdot0.5\cdot\pi\\
+        &= \dfrac{3\pi}{16}\\
+        E_{out}(h2) &= P(x_1^2 + x_2^2 < 0.25) - P(|x_1| + |x_2| < 0.5) = \dfrac{1}{4}\cdot0.5\cdot0.5\cdot\pi - \dfrac{1}{4}\cdot\sqrt{\frac{1}{2}}^2\\
+        &= \dfrac{\pi - 2}{16}
+    \end{align*}
+    \includegraphics[width=0.5\textwidth]{hw1_p9_graph.png}
+
+    \item \text{[b]}\\%p10
+    \\We have to choose the area which is in both $x_1^2 + x_2^2 = 1$ and $|x_1| + |x_2| = 0.5$ or outside both of them within $[-1,+1]\times[-1,+1]$.\\
+    $\left(P(in) + P(out)\right)^4 = \left(\dfrac{1}{4}\cdot\sqrt{\frac{1}{2}}^2 + \dfrac{1}{4}(2\cdot2 - \cdot1\cdot1\cdot\pi)\right)^4 \approx 0.0133$\\
+    Hence, we choose the answer 0.01.\\\\
+    \includegraphics[width=0.5\textwidth]{hw1_p10_graph.png}
+
+    \item \text{[d]}\\%p11
+    \\Using Hoeffding’s inequality, we can find that $P((value - \pi) > (\frac{\epsilon}{4} = \frac{0.01}{4})) \leq 2e^{-2(0.01)^2N}$.\\However, we have to ensure that
+    $2e^{-2(\frac{0.01}{4})^2N} < 0.01$.
+    \[-2(\frac{0.01}{4})^2N + \ln{2} < \ln{(0.01)}\]
+    \[N > \frac{\ln{(0.01)} - \ln{(2)}}{-2(\frac{0.01}{4})^2}\approx 423865\]
+    Hence we choose 423865.
+
+    \item \text{[d]}\\%p12
+    \\Using Hoeffding’s inequality, $P(|value - \pi| > \frac{\epsilon}{2})\leq 2Me^{-2(\frac{\epsilon}{2})^2N} = \delta$
+    \[e^{-2(\frac{\epsilon}{2})^2N} = \frac{\delta}{2M}\]
+    \[N = \frac{2}{\epsilon^2}\ln{\frac{2M}{\delta}}\]
+
+    \item \text{[b]}\\%p13
+    \lstinputlisting[language=c++]{hw1_p13.cpp}
+    \item \text{[a]}\\%p14
+    \lstinputlisting[language=c++]{hw1_p14.cpp}
+    \item \text{[d]}\\%p15
+    \lstinputlisting[language=c++]{hw1_p15.cpp}
+    \item \text{[e]}\\%p16
+    \lstinputlisting[language=c++]{hw1_p16.cpp}
+    \item \text{[d]}\\%p17
+    \lstinputlisting[language=c++]{hw1_p17.cpp}
+    \item \text{[d]}\\%p18
+    \lstinputlisting[language=c++]{hw1_p18.cpp}
+    \item \text{[e]}\\%p19
+    \lstinputlisting[language=c++]{hw1_p19.cpp}
+    \item \text{[c]}\\%p20
+    \lstinputlisting[language=c++]{hw1_p20.cpp}
+    
+    
+    \end{enumerate}
+
+\end{document}
